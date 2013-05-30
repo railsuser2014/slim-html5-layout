@@ -1,3 +1,8 @@
+/local defined variables
+- viewport = if request.user_agent.match /iPad/ then 'width=1024' else 'width=device-width, initial-scale=1.0, maximum-scale=1.0' end
+- google_analytics_code = if Rails.env.production? then 'UA-XXXXXXX-X' else '' end
+
+/markup
 doctype 5
 /[if lt IE 7]
   | <html class="no-js lt-ie9 lt-ie8 lt-ie7">
@@ -12,52 +17,53 @@ head
   title
     | ECFL
   meta content="" name="description"
-  meta content="width=device-width" name="viewport"
+  meta content="#{viewport}" name="viewport"
 
-  == stylesheet_link_tag 'application.min'
+  == stylesheet_link_tag 'application'
 
-  == stylesheet_link_tag 'print.min', :media => 'print'
+  == stylesheet_link_tag 'print', :media => 'print'
 
   /[if IE]
-    == stylesheet_link_tag 'ie.min'
+    == stylesheet_link_tag 'ie'
   /[if IE 7]
-    == stylesheet_link_tag 'ie7.min'
+    == stylesheet_link_tag 'ie7'
   /[if IE 8]
-    == stylesheet_link_tag 'ie8.min'
+    == stylesheet_link_tag 'ie8'
   /[if IE 9]
-    == stylesheet_link_tag 'ie9.min'
-
-  script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.1/modernizr.min.js"
-  script type="text/javascript"
-    == "window.Modernizr || document.write('<script src=\"#{javascript_path 'vendor/modernizr.min.js'}\" />');"
-
-body
-  section#main
-    /[if lt IE 7]
-      == render 'shared/unsupported_browser_warning'
-    div.main-background style="background-image: url(#{image_path('dummy/background.jpg')})"
-    == render 'shared/header'
-
-    section.content
-      == yield
-
-    div#root-footer
-
-  == render 'shared/footer'
+    == stylesheet_link_tag 'ie9'
 
   coffee:
+    window.app =
+      inline:
+        pre: []
+        post: []
+
     window.Collections = {}
     window.Models = {}
     window.Utils = {}
     window.Views = {}
 
-  script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"
+  script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.1/modernizr.js"
+  script type="text/javascript"
+    == "window.Modernizr || document.write('<script src=\"#{javascript_path 'vendor/modernizr.js'}\" />');"
+
+body
+  header
+    | stuff for the header
+  section#main
+    div.content
+      == yield
+
+  footer
+    | stuff for the footer
+
+  script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"
 
   == javascript_include_tag 'application'
 
   script type="text/javascript"
-    == "window.jQuery || document.write('<script src=\"#{javascript_path 'vendor/jquery.min.js'}\" />');"
-    | var _gaq=[['_setAccount','UA-#{t('config.google_analytics')}'],['_trackPageview']];
+    == "window.jQuery || document.write('<script src=\"#{javascript_path 'vendor/jquery.js'}\" />');"
+    | var _gaq=[['_setAccount','#{google_analytics_code}'],['_trackPageview']];
     | (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
     | g.src='//www.google-analytics.com/ga.js';
     | s.parentNode.insertBefore(g,s)}(document,'script'));
